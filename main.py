@@ -1,8 +1,13 @@
 from fastapi import FastAPI
-import subprocess
-import os
+from pydantic import BaseModel
+
+from app.services.app_launcher import launch_app
 
 app = FastAPI(title="Nexus Pendant Laptop Agent")
+
+
+class AppRequest(BaseModel):
+    app_name: str
 
 
 @app.get("/")
@@ -13,19 +18,18 @@ def home():
     }
 
 
-@app.post("/open_chrome")
-def open_chrome():
-    subprocess.Popen("start chrome", shell=True)
-    return {"message": "Chrome opened"}
+@app.post("/open_app")
+def open_app(request: AppRequest):
 
+    success = launch_app(request.app_name)
 
-@app.post("/open_vscode")
-def open_vscode():
-    subprocess.Popen("code", shell=True)
-    return {"message": "VS Code opened"}
+    if success:
+        return {
+            "status": "success",
+            "app": request.app_name
+        }
 
-
-@app.post("/lock")
-def lock_pc():
-    os.system("rundll32.exe user32.dll,LockWorkStation")
-    return {"message": "PC locked"}
+    return {
+        "status": "error",
+        "message": "App not supported"
+    }
