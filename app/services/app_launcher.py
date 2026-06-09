@@ -1,18 +1,14 @@
 import subprocess
-
-APPS = {
-    "chrome": "start chrome",
-    "vscode": "code",
-    "notepad": "notepad",
-    "calculator": "calc",
-}
+from app.services.app_registry import APPS
 
 
 def launch_app(app_name: str):
+
     app_name = app_name.lower()
 
     if app_name not in APPS:
         return False
 
-    subprocess.Popen(APPS[app_name], shell=True)
+    subprocess.Popen(APPS[app_name])
+
     return True
