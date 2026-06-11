@@ -6,11 +6,13 @@ from app.services.file_opener import open_file
 from app.services.command_parser import normalize_command
 from app.services.search_memory import LAST_RESULTS
 from app.services.volume_control import set_volume
+from app.services.app_closer import close_all_apps,close_app
 
 COMMANDS = {
     "open youtube": lambda: open_website("https://youtube.com"),
     "open github": lambda: open_website("https://github.com"),
     "lock pc": lambda: lock_pc(),
+    "close all": lambda: close_all_apps(),
 }
 
 
@@ -67,5 +69,15 @@ def execute_command(command: str):
      except Exception as e:
 
         return str(e)
+    
+
+    if command == "close all":
+      return close_all_apps()
+
+    if command.startswith("close "):
+
+       app_name = command.replace("close ", "").strip()
+
+       return close_app(app_name)
 
     return "Unknown command"
